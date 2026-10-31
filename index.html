@@ -52,6 +52,8 @@ input:focus,select:focus{outline:none;border-color:var(--cy);box-shadow:0 0 10px
 .item{box-shadow:0 0 0 1px rgba(0,240,255,.07)}
 .item:hover{border-color:var(--cy)}
 .del:hover{color:var(--bad)}
+.item.bad{border-color:var(--bad);background:rgba(255,42,109,.12)}
+.jeter{display:inline-block;background:var(--bad);color:#0a0a12;font-weight:700;font-size:.75rem;padding:3px 10px;border-radius:99px;margin-bottom:6px;letter-spacing:.04em}
 </style>
 </head>
 <body>
@@ -65,7 +67,7 @@ input:focus,select:focus{outline:none;border-color:var(--cy);box-shadow:0 0 10px
   <button class="go" id="add">Ajouter</button>
 </div>
 <div class="row fresh" id="fresh">
-  <select id="dtype"><option>Acheté le</option><option>Ouvert le</option></select>
+  <select id="dtype"><option>Acheté le</option><option>Ouvert le</option><option>Préparé le</option></select>
   <input id="date" type="date">
 </div>
 <div class="chips" id="chips"></div>
@@ -174,9 +176,11 @@ async function setImage(it,next){
 /* ---- affichage ---- */
 function ageInfo(it){
   if(!it.date)return null;
-  const d=days(it.date),lim=it.dtype==="Ouvert le"?5:10;
-  const col=d>=lim*1.5?"var(--bad)":d>=lim?"var(--warn)":"var(--ok)";
-  return{txt:(it.dtype==="Ouvert le"?"Ouvert ":"Acheté ")+(d===0?"aujourd’hui":"il y a "+d+" j"),col};
+  const d=days(it.date),pr=it.dtype==="Ouvert le"||it.dtype==="Préparé le";
+  const verb=it.dtype==="Ouvert le"?"Ouvert ":it.dtype==="Préparé le"?"Préparé ":"Acheté ";
+  const jeter=pr&&d>7;
+  const col=jeter?"var(--bad)":pr?(d>=5?"var(--warn)":"var(--ok)"):(d>=15?"var(--bad)":d>=10?"var(--warn)":"var(--ok)");
+  return{txt:verb+(d===0?"aujourd’hui":"il y a "+d+" j"),col,jeter};
 }
 const ref=it=>doc(db,"foyers",code,"items",it.id);
 function render(){
@@ -208,7 +212,7 @@ function render(){
     const t=document.createElement("div");t.className="tag";t.textContent=it.cat;
     d.append(x,p,n,t);
     const a=ageInfo(it);
-    if(a){const e=document.createElement("div");e.className="age";e.style.color=a.col;e.textContent=a.txt;d.append(e)}
+    if(a){const e=document.createElement("div");e.className="age";e.style.color=a.col;e.textContent=a.txt;d.append(e);if(a.jeter){d.classList.add("bad");const j=document.createElement("div");j.className="jeter";j.textContent="À JETER";d.append(j)}}
     const qd=document.createElement("div");qd.className="q";
     const m=document.createElement("button");m.textContent="−";
     const c=document.createElement("span");c.textContent=it.qty;
