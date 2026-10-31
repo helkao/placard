@@ -4,30 +4,30 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Mes placards</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
-<meta name="theme-color" content="#d9622b">
+<meta name="theme-color" content="#0a0a12">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Placards">
 <style>
-:root{--bg:#faf6ef;--card:#fff;--ink:#2b2a27;--mute:#8a857b;--acc:#d9622b;--line:#ece5d8;--ok:#3f9b5b;--warn:#d98a1f;--bad:#c9402e}
-@media (prefers-color-scheme:dark){:root{--bg:#1b1a18;--card:#26241f;--ink:#f1ece2;--mute:#9a9488;--acc:#f0834d;--line:#38352e;color-scheme:dark}}
+:root{--bg:#0a0a12;--card:#14141f;--ink:#f4f4f8;--mute:#8f93b0;--acc:#fcee0a;--cy:#00f0ff;--line:#2a2a40;--ok:#00f0ff;--warn:#ff9f1c;--bad:#ff2a6d;color-scheme:dark}
 *{box-sizing:border-box}
 html,body{margin:0}
-body{background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;padding:16px;padding-top:calc(16px + env(safe-area-inset-top,0px));padding-bottom:calc(16px + env(safe-area-inset-bottom,0px));max-width:680px;margin:0 auto}
+body{background:var(--bg);color:var(--ink);font-family:'Space Grotesk',system-ui,-apple-system,"Segoe UI",sans-serif;padding:16px;padding-top:calc(16px + env(safe-area-inset-top,0px));padding-bottom:calc(16px + env(safe-area-inset-bottom,0px));max-width:680px;margin:0 auto}
 h1{font-size:1.5rem;margin:8px 0 14px}
 input,select{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 12px;min-width:0}
 button{font:inherit;cursor:pointer;border:0;border-radius:12px;color:var(--ink)}
 .row{display:flex;gap:8px;margin-bottom:8px}
 .row>*{flex:1}
 #qty{flex:0 0 64px;text-align:center}
-.go{background:var(--acc);color:#fff;padding:0 18px;font-weight:600;flex:0 0 auto}
+.go{background:var(--acc);color:#0a0a12;box-shadow:0 0 14px rgba(252,238,10,.35);padding:0 18px;font-weight:600;flex:0 0 auto}
 .fresh{display:none}.fresh.on{display:flex}
 .chips{display:flex;gap:6px;overflow-x:auto;padding:6px 0}
 .chip{background:var(--card);border:1px solid var(--line);padding:7px 12px;white-space:nowrap;border-radius:99px}
-.chip.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+.chip.on{background:var(--acc);color:#0a0a12;box-shadow:0 0 12px rgba(252,238,10,.4);border-color:var(--acc)}
 .meta{color:var(--mute);font-size:.85rem;margin:6px 2px 10px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
 .item{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;text-align:center;position:relative}
@@ -47,6 +47,11 @@ button{font:inherit;cursor:pointer;border:0;border-radius:12px;color:var(--ink)}
 #gate.on{display:flex}
 #gate p{color:var(--mute);margin:0}
 #err{color:var(--bad);font-size:.9rem;min-height:1.2em}
+h1{text-shadow:2px 2px 0 rgba(255,42,109,.55)}
+input:focus,select:focus{outline:none;border-color:var(--cy);box-shadow:0 0 10px rgba(0,240,255,.45)}
+.item{box-shadow:0 0 0 1px rgba(0,240,255,.07)}
+.item:hover{border-color:var(--cy)}
+.del:hover{color:var(--bad)}
 </style>
 </head>
 <body>
