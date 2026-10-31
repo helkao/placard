@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mes placards</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="theme-color" content="#d9622b">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Placards">
+<style>
+:root{--bg:#faf6ef;--card:#fff;--ink:#2b2a27;--mute:#8a857b;--acc:#d9622b;--line:#ece5d8;--ok:#3f9b5b;--warn:#d98a1f;--bad:#c9402e}
+@media (prefers-color-scheme:dark){:root{--bg:#1b1a18;--card:#26241f;--ink:#f1ece2;--mute:#9a9488;--acc:#f0834d;--line:#38352e;color-scheme:dark}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;padding:16px;padding-top:calc(16px + env(safe-area-inset-top,0px));padding-bottom:calc(16px + env(safe-area-inset-bottom,0px));max-width:680px;margin:0 auto}
+h1{font-size:1.5rem;margin:8px 0 14px}
+input,select{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 12px;min-width:0}
+button{font:inherit;cursor:pointer;border:0;border-radius:12px;color:var(--ink)}
+.row{display:flex;gap:8px;margin-bottom:8px}
+.row>*{flex:1}
+#qty{flex:0 0 64px;text-align:center}
+.go{background:var(--acc);color:#fff;padding:0 18px;font-weight:600;flex:0 0 auto}
+.fresh{display:none}.fresh.on{display:flex}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:6px 0}
+.chip{background:var(--card);border:1px solid var(--line);padding:7px 12px;white-space:nowrap;border-radius:99px}
+.chip.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+.meta{color:var(--mute);font-size:.85rem;margin:6px 2px 10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+.item{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;text-align:center;position:relative}
+.pic{font-size:2.4rem;height:90px;width:100%;background:none;display:flex;align-items:center;justify-content:center}
+.pic img{max-width:100%;max-height:90px;border-radius:10px;object-fit:contain}
+.nm{font-weight:600;margin:4px 0;word-break:break-word}
+.tag{font-size:.75rem;color:var(--mute);margin-bottom:6px}
+.age{font-size:.75rem;font-weight:600;margin-bottom:6px}
+.q{display:flex;align-items:center;justify-content:center;gap:10px}
+.q button{width:32px;height:32px;background:var(--line);font-size:1.1rem}
+.q span{min-width:24px;font-weight:600}
+.del{position:absolute;top:6px;right:6px;background:var(--card);opacity:.85;color:var(--mute);font-size:1rem;padding:4px 8px}
+.empty{text-align:center;color:var(--mute);padding:40px 0}
+.foot{margin-top:24px;text-align:center;color:var(--mute);font-size:.8rem}
+.foot button{background:none;color:var(--acc);text-decoration:underline;padding:4px}
+#gate{position:fixed;inset:0;background:var(--bg);z-index:9;display:none;flex-direction:column;justify-content:center;gap:12px;padding:24px;max-width:680px;margin:0 auto}
+#gate.on{display:flex}
+#gate p{color:var(--mute);margin:0}
+#err{color:var(--bad);font-size:.9rem;min-height:1.2em}
+</style>
+</head>
+<body>
+<h1>🥫 Mes placards</h1>
+<div class="row">
+  <input id="name" placeholder="Ajouter un aliment (ex. lasagnes)" autocomplete="off">
+  <input id="qty" type="number" min="1" value="1" aria-label="Quantité">
+</div>
+<div class="row">
+  <select id="cat" aria-label="Catégorie"></select>
+  <button class="go" id="add">Ajouter</button>
+</div>
+<div class="row fresh" id="fresh">
+  <select id="dtype"><option>Acheté le</option><option>Ouvert le</option></select>
+  <input id="date" type="date">
+</div>
+<div class="chips" id="chips"></div>
+<div class="row">
+  <input id="search" placeholder="Rechercher…" autocomplete="off">
+  <select id="sort" aria-label="Trier">
+    <option value="recent">Plus récents</option>
+    <option value="az">A → Z</option>
+    <option value="qty">Quantité ↓</option>
+    <option value="old">Les plus anciens d’abord</option>
+  </select>
+</div>
+<div class="meta" id="meta"></div>
+<div class="grid" id="grid"></div>
+<div class="empty" id="empty" hidden>Rien ici pour l’instant. Ajoute ton premier aliment !</div>
+<div class="foot">Code du foyer : <b id="code"></b> · <button id="chg">changer</button><br>Touche une photo pour en essayer une autre.</div>
+
+<div id="gate">
+  <h1>🔑 Code du foyer</h1>
+  <p>Choisis une phrase ou un mot de passe (8 caractères minimum). Vous deux devez saisir <b>exactement le même code</b> pour partager la même liste. Ne le donne à personne d’autre.</p>
+  <input id="gcode" placeholder="ex. placards-de-nous-2026" autocomplete="off">
+  <div id="err"></div>
+  <button class="go" id="gok" style="padding:12px">Valider</button>
+</div>
+
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {initializeFirestore,persistentLocalCache,collection,doc,setDoc,updateDoc,deleteDoc,onSnapshot} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const app=initializeApp({
+  apiKey:"AIzaSyDiTe_ttmkK1UeW8_C5BlTQPPinXwB5TUQ",
+  authDomain:"pour-ma-princesse.firebaseapp.com",
+  projectId:"pour-ma-princesse",
+  storageBucket:"pour-ma-princesse.firebasestorage.app",
+  messagingSenderId:"866402502146",
+  appId:"1:866402502146:web:e6ed5692f4920f8556491b"
+});
+const db=initializeFirestore(app,{localCache:persistentLocalCache()});
+
+const CATS=["Frais","Épicerie","Conserves","Surgelés","Boissons","Autre"];
+const $=id=>document.getElementById(id);
+const load=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}};
+const put=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/\s+/g," ").trim();
+const today=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+const days=s=>Math.max(0,Math.round((new Date(today())-new Date(s))/864e5));
+
+let items=[],filter="Tout",code=load("foyer",""),unsub=null;
+const imgCache=load("imgcache",{}),cands={},busy=new Set();
+
+CATS.forEach(c=>{const o=document.createElement("option");o.textContent=c;$("cat").append(o)});
+$("date").value=today();
+$("cat").onchange=()=>$("fresh").classList.toggle("on",$("cat").value==="Frais");
+
+/* ---- code du foyer ---- */
+function connect(){
+  if(unsub){unsub();unsub=null}
+  if(!code){$("gate").classList.add("on");return}
+  $("gate").classList.remove("on");$("code").textContent=code;
+  unsub=onSnapshot(collection(db,"foyers",code,"items"),
+    s=>{items=s.docs.map(d=>({id:d.id,...d.data()}));render()},
+    e=>{$("meta").textContent="Erreur de synchronisation : "+e.code});
+}
+$("gok").onclick=()=>{
+  const c=norm($("gcode").value).replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+  if(c.length<8){$("err").textContent="Au moins 8 caractères (lettres ou chiffres).";return}
+  code=c;put("foyer",c);$("err").textContent="";connect();
+};
+$("chg").onclick=()=>{if(confirm("Changer de code ? Tu verras alors la liste de l’autre code.")){code="";put("foyer","");items=[];render();connect()}};
+
+/* ---- images ---- */
+async function candidates(name){
+  const out=[];
+  try{
+    const u="https://fr.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch="+encodeURIComponent(name)+"&gsrlimit=6&prop=pageimages&piprop=thumbnail&pithumbsize=260&format=json&origin=*";
+    const j=await (await fetch(u)).json();
+    Object.values(j.query?.pages||{}).sort((a,b)=>a.index-b.index).forEach(p=>p.thumbnail&&out.push(p.thumbnail.source));
+  }catch(e){}
+  try{
+    const u="https://world.openfoodfacts.org/cgi/search.pl?search_terms="+encodeURIComponent(name)+"&search_simple=1&action=process&json=1&page_size=6&fields=image_front_small_url";
+    const j=await (await fetch(u)).json();
+    (j.products||[]).forEach(p=>p.image_front_small_url&&out.push(p.image_front_small_url));
+  }catch(e){}
+  return out;
+}
+async function findImage(name,next,current){
+  const k=norm(name);
+  if(!next&&imgCache[k])return imgCache[k];
+  if(!cands[k])cands[k]={list:await candidates(name),i:-1};
+  const c=cands[k];
+  if(!c.list.length)return null;
+  if(next&&c.i<0)c.i=c.list.indexOf(current);
+  c.i=(c.i+1)%c.list.length;
+  imgCache[k]=c.list[c.i];put("imgcache",imgCache);
+  return c.list[c.i];
+}
+async function setImage(it,next){
+  if(busy.has(it.id))return;
+  busy.add(it.id);render();
+  const url=await findImage(it.name,next,it.image);
+  busy.delete(it.id);
+  if(url)try{await updateDoc(doc(db,"foyers",code,"items",it.id),{image:url})}catch(e){}
+  render();
+}
+
+/* ---- affichage ---- */
+function ageInfo(it){
+  if(!it.date)return null;
+  const d=days(it.date),lim=it.dtype==="Ouvert le"?5:10;
+  const col=d>=lim*1.5?"var(--bad)":d>=lim?"var(--warn)":"var(--ok)";
+  return{txt:(it.dtype==="Ouvert le"?"Ouvert ":"Acheté ")+(d===0?"aujourd’hui":"il y a "+d+" j"),col};
+}
+const ref=it=>doc(db,"foyers",code,"items",it.id);
+function render(){
+  const ch=$("chips");ch.textContent="";
+  ["Tout",...CATS].forEach(c=>{
+    const b=document.createElement("button");b.className="chip"+(c===filter?" on":"");
+    b.textContent=c+" ("+(c==="Tout"?items.length:items.filter(i=>i.cat===c).length)+")";
+    b.onclick=()=>{filter=c;render()};ch.append(b);
+  });
+  const q=norm($("search").value);
+  const list=items.filter(i=>(filter==="Tout"||i.cat===filter)&&norm(i.name).includes(q));
+  const s=$("sort").value;
+  if(s==="az")list.sort((a,b)=>a.name.localeCompare(b.name,"fr"));
+  else if(s==="qty")list.sort((a,b)=>b.qty-a.qty);
+  else if(s==="old")list.sort((a,b)=>(a.date?new Date(a.date):1e15)-(b.date?new Date(b.date):1e15));
+  else list.sort((a,b)=>(b.created||0)-(a.created||0));
+  const g=$("grid");g.textContent="";
+  list.forEach(it=>{
+    const d=document.createElement("div");d.className="item";
+    const x=document.createElement("button");x.className="del";x.textContent="✕";x.title="Supprimer";
+    x.onclick=()=>deleteDoc(ref(it));
+    const p=document.createElement("button");p.className="pic";p.style.opacity=busy.has(it.id)?.4:1;
+    const letter=()=>{p.textContent=it.name.charAt(0).toUpperCase()};
+    if(busy.has(it.id))p.textContent="⏳";
+    else if(it.image){const im=document.createElement("img");im.src=it.image;im.alt=it.name;im.referrerPolicy="no-referrer";im.onerror=()=>{im.remove();letter()};p.append(im)}
+    else letter();
+    p.onclick=()=>setImage(it,true);
+    const n=document.createElement("div");n.className="nm";n.textContent=it.name;
+    const t=document.createElement("div");t.className="tag";t.textContent=it.cat;
+    d.append(x,p,n,t);
+    const a=ageInfo(it);
+    if(a){const e=document.createElement("div");e.className="age";e.style.color=a.col;e.textContent=a.txt;d.append(e)}
+    const qd=document.createElement("div");qd.className="q";
+    const m=document.createElement("button");m.textContent="−";
+    const c=document.createElement("span");c.textContent=it.qty;
+    const pl=document.createElement("button");pl.textContent="+";
+    m.onclick=()=>it.qty>1?updateDoc(ref(it),{qty:it.qty-1}):deleteDoc(ref(it));
+    pl.onclick=()=>updateDoc(ref(it),{qty:it.qty+1});
+    qd.append(m,c,pl);d.append(qd);g.append(d);
+  });
+  $("empty").hidden=list.length>0;
+  $("meta").textContent=items.length?(list.length+" affiché(s) sur "+items.length):"";
+}
+
+/* ---- ajout ---- */
+async function addItem(){
+  const name=$("name").value.trim();
+  if(!name||!code)return;
+  const qty=Math.max(1,parseInt($("qty").value)||1),cat=$("cat").value,fresh=cat==="Frais";
+  const date=$("date").value||today(),dtype=$("dtype").value;
+  $("name").value="";$("qty").value=1;$("name").focus();
+  const ex=items.find(i=>norm(i.name)===norm(name)&&i.cat===cat&&(!fresh||(i.date===date&&i.dtype===dtype)));
+  if(ex){updateDoc(ref(ex),{qty:ex.qty+qty});return}
+  const it={id:Date.now()+""+Math.random().toString(36).slice(2,6),name,qty,cat,created:Date.now(),image:imgCache[norm(name)]||""};
+  const data={name,qty,cat,created:it.created,image:it.image};
+  if(fresh){data.dtype=dtype;data.date=date}
+  await setDoc(doc(db,"foyers",code,"items",it.id),data);
+  if(!it.image)setImage({...data,id:it.id},false);
+}
+$("add").onclick=addItem;
+$("name").addEventListener("keydown",e=>{if(e.key==="Enter")addItem()});
+$("search").addEventListener("input",render);
+$("sort").onchange=render;
+render();connect();
+if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
+</script>
+</body>
+</html>
