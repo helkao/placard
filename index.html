@@ -120,7 +120,8 @@ const imgCache=load("imgcache",{}),cands={},busy=new Set();
 
 CATS.forEach(c=>{const o=document.createElement("option");o.textContent=c;$("cat").append(o)});
 $("date").value=today();
-$("cat").onchange=()=>$("fresh").classList.toggle("on",$("cat").value==="Frais");
+const toggleFresh=()=>$("fresh").classList.toggle("on",$("cat").value==="Frais");
+$("cat").onchange=toggleFresh;toggleFresh();
 
 /* ---- code du foyer ---- */
 function connect(){
