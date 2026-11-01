@@ -15,87 +15,116 @@
 <style>
 :root{--bg:#0a0a12;--card:#14141f;--ink:#f4f4f8;--mute:#8f93b0;--acc:#fcee0a;--cy:#00f0ff;--line:#2a2a40;--ok:#00f0ff;--warn:#ff9f1c;--bad:#ff2a6d;color-scheme:dark}
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html,body{margin:0}
 body{background:var(--bg);color:var(--ink);font-family:'Space Grotesk',system-ui,-apple-system,"Segoe UI",sans-serif;padding:16px;padding-top:calc(16px + env(safe-area-inset-top,0px));padding-bottom:calc(16px + env(safe-area-inset-bottom,0px));max-width:680px;margin:0 auto}
-h1{font-size:1.5rem;margin:8px 0 14px}
+h1{font-size:1.5rem;margin:8px 0 14px;text-shadow:2px 2px 0 rgba(255,42,109,.55)}
 input,select{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 12px;min-width:0}
+input:focus,select:focus{outline:none;border-color:var(--cy);box-shadow:0 0 10px rgba(0,240,255,.45)}
 button{font:inherit;cursor:pointer;border:0;border-radius:12px;color:var(--ink)}
 .row{display:flex;gap:8px;margin-bottom:8px}
 .row>*{flex:1}
 #qty{flex:0 0 64px;text-align:center}
-.go{background:var(--acc);color:#0a0a12;box-shadow:0 0 14px rgba(252,238,10,.35);padding:0 18px;font-weight:600;flex:0 0 auto}
+.go{background:var(--acc);color:#0a0a12;padding:12px 18px;font-weight:700;box-shadow:0 0 14px rgba(252,238,10,.35)}
 .fresh{display:none}.fresh.on{display:flex}
-.chips{display:flex;gap:6px;overflow-x:auto;padding:6px 0}
+.tabs{display:flex;gap:8px;margin-bottom:12px}
+.tab{flex:1;padding:11px;background:var(--card);border:1px solid var(--line);font-weight:700}
+.tab.on{background:var(--acc);color:#0a0a12;border-color:var(--acc)}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:4px 0}
 .chip{background:var(--card);border:1px solid var(--line);padding:7px 12px;white-space:nowrap;border-radius:99px}
-.chip.on{background:var(--acc);color:#0a0a12;box-shadow:0 0 12px rgba(252,238,10,.4);border-color:var(--acc)}
+.chip.on{background:var(--acc);color:#0a0a12;border-color:var(--acc);box-shadow:0 0 12px rgba(252,238,10,.4)}
+.chips.t .chip{font-size:.85rem;padding:5px 10px}
+.chips.t .chip.on{background:var(--cy);border-color:var(--cy);box-shadow:0 0 12px rgba(0,240,255,.4)}
 .meta{color:var(--mute);font-size:.85rem;margin:6px 2px 10px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
-.item{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;text-align:center;position:relative}
+.item{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;text-align:center;position:relative;box-shadow:0 0 0 1px rgba(0,240,255,.07)}
+.item.bad{border-color:var(--bad);background:rgba(255,42,109,.12)}
 .pic{font-size:2.4rem;height:90px;width:100%;background:none;display:flex;align-items:center;justify-content:center}
 .pic img{max-width:100%;max-height:90px;border-radius:10px;object-fit:contain}
 .nm{font-weight:600;margin:4px 0;word-break:break-word}
 .tag{font-size:.75rem;color:var(--mute);margin-bottom:6px}
 .age{font-size:.75rem;font-weight:600;margin-bottom:6px}
+.jeter{display:inline-block;background:var(--bad);color:#0a0a12;font-weight:700;font-size:.75rem;padding:3px 10px;border-radius:99px;margin-bottom:6px;letter-spacing:.04em}
 .q{display:flex;align-items:center;justify-content:center;gap:10px}
 .q button{width:32px;height:32px;background:var(--line);font-size:1.1rem}
 .q span{min-width:24px;font-weight:600}
-.del{position:absolute;top:6px;right:6px;background:var(--card);opacity:.85;color:var(--mute);font-size:1rem;padding:4px 8px}
+.del,.ed{position:absolute;top:6px;background:var(--card);opacity:.85;color:var(--mute);font-size:1rem;padding:4px 8px}
+.del{right:6px}.ed{left:6px}
+.del:hover{color:var(--bad)}.ed:hover{color:var(--cy)}
 .empty{text-align:center;color:var(--mute);padding:40px 0}
+.grp{font-weight:700;color:var(--cy);margin:16px 2px 6px;text-transform:uppercase;font-size:.8rem;letter-spacing:.08em}
+.li{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 12px;margin-bottom:6px}
+.li input{width:22px;height:22px;accent-color:#fcee0a;padding:0;flex:none}
+.li .ln{flex:1;word-break:break-word;cursor:pointer}
+.li.done .ln{text-decoration:line-through;color:var(--mute)}
+.li button{background:none;color:var(--mute);padding:4px 8px}
 .foot{margin-top:24px;text-align:center;color:var(--mute);font-size:.8rem}
 .foot button{background:none;color:var(--acc);text-decoration:underline;padding:4px}
-#gate{position:fixed;inset:0;background:var(--bg);z-index:9;display:none;flex-direction:column;justify-content:center;gap:12px;padding:24px;max-width:680px;margin:0 auto}
-#gate.on{display:flex}
-#gate p{color:var(--mute);margin:0}
+.ov{position:fixed;inset:0;background:var(--bg);z-index:9;display:none;flex-direction:column;gap:10px;padding:24px;max-width:680px;margin:0 auto;overflow:auto}
+.ov.on{display:flex}
+.ov p{color:var(--mute);margin:0}
+#gate{justify-content:center}
 #err{color:var(--bad);font-size:.9rem;min-height:1.2em}
-h1{text-shadow:2px 2px 0 rgba(255,42,109,.55)}
-input:focus,select:focus{outline:none;border-color:var(--cy);box-shadow:0 0 10px rgba(0,240,255,.45)}
-.item{box-shadow:0 0 0 1px rgba(0,240,255,.07)}
-.item:hover{border-color:var(--cy)}
-.del:hover{color:var(--bad)}
-.item.bad{border-color:var(--bad);background:rgba(255,42,109,.12)}
-.jeter{display:inline-block;background:var(--bad);color:#0a0a12;font-weight:700;font-size:.75rem;padding:3px 10px;border-radius:99px;margin-bottom:6px;letter-spacing:.04em}
 </style>
 </head>
 <body>
 <h1>🥫 Mes placards</h1>
-<div class="row">
-  <input id="name" placeholder="Ajouter un aliment (ex. lasagnes)" autocomplete="off">
-  <input id="qty" type="number" min="1" value="1" aria-label="Quantité">
-</div>
-<div class="row">
-  <select id="cat" aria-label="Catégorie"></select>
-  <button class="go" id="add">Ajouter</button>
-</div>
-<div class="row fresh" id="fresh">
-  <select id="dtype"><option>Acheté le</option><option>Ouvert le</option><option>Préparé le</option></select>
-  <input id="date" type="date">
-</div>
-<div class="chips" id="chips"></div>
-<div class="row">
-  <input id="search" placeholder="Rechercher…" autocomplete="off">
-  <select id="sort" aria-label="Trier">
-    <option value="recent">Plus récents</option>
-    <option value="az">A → Z</option>
-    <option value="qty">Quantité ↓</option>
-    <option value="old">Les plus anciens d’abord</option>
-  </select>
-</div>
-<div class="meta" id="meta"></div>
-<div class="grid" id="grid"></div>
-<div class="empty" id="empty" hidden>Rien ici pour l’instant. Ajoute ton premier aliment !</div>
-<div class="foot">Code du foyer : <b id="code"></b> · <button id="chg">changer</button><br>Touche une photo pour en essayer une autre.</div>
+<div class="tabs"><button class="tab on" id="tabP">Placards</button><button class="tab" id="tabS">Courses</button></div>
 
-<div id="gate">
+<section id="pantry">
+  <div class="row">
+    <input id="name" placeholder="Ajouter un aliment (ex. lasagnes)" autocomplete="off">
+    <input id="qty" type="number" min="1" value="1" aria-label="Quantité">
+  </div>
+  <div class="row"><select id="cat" aria-label="Catégorie"></select><select id="type" aria-label="Type d’aliment"></select></div>
+  <div class="row fresh" id="fresh"><select id="dtype"></select><input id="date" type="date"></div>
+  <div class="row"><button class="go" id="add">Ajouter</button></div>
+  <div class="chips" id="chips"></div>
+  <div class="chips t" id="tchips"></div>
+  <div class="row" style="margin-top:6px">
+    <input id="search" placeholder="Rechercher…" autocomplete="off">
+    <select id="sort" aria-label="Trier">
+      <option value="recent">Plus récents</option>
+      <option value="az">A → Z</option>
+      <option value="qty">Quantité ↓</option>
+      <option value="old">Les plus anciens d’abord</option>
+    </select>
+  </div>
+  <div class="meta" id="meta"></div>
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="empty" hidden>Rien ici pour l’instant. Ajoute ton premier aliment !</div>
+</section>
+
+<section id="shop" hidden>
+  <div class="row"><input id="sname" placeholder="À acheter (ex. riz)" autocomplete="off"></div>
+  <div class="row"><select id="stype" aria-label="Type"></select><button class="go" id="sadd">Ajouter</button></div>
+  <div id="slist"></div>
+  <div class="empty" id="sempty" hidden>La liste de courses est vide.</div>
+  <div class="row" style="margin-top:12px"><button class="tab" id="sclear" hidden>Retirer les articles cochés</button></div>
+</section>
+
+<div class="foot">Code du foyer : <b id="code"></b> · <button id="chg">changer</button><br>Placards : touche une photo pour en essayer une autre, ✎ pour modifier.</div>
+
+<div id="gate" class="ov">
   <h1>🔑 Code du foyer</h1>
   <p>Choisis une phrase ou un mot de passe (8 caractères minimum). Vous deux devez saisir <b>exactement le même code</b> pour partager la même liste. Ne le donne à personne d’autre.</p>
   <input id="gcode" placeholder="ex. placards-de-nous-2026" autocomplete="off">
   <div id="err"></div>
-  <button class="go" id="gok" style="padding:12px">Valider</button>
+  <button class="go" id="gok">Valider</button>
+</div>
+
+<div id="edit" class="ov">
+  <h1>✎ Modifier</h1>
+  <input id="ename" placeholder="Nom" autocomplete="off">
+  <div class="row"><select id="ecat" aria-label="Catégorie"></select><select id="etype" aria-label="Type"></select></div>
+  <div class="row fresh" id="efresh"><select id="edtype"></select><input id="edate" type="date"></div>
+  <div class="row"><input id="eqty" type="number" min="1" aria-label="Quantité"><button class="go" id="esave">Enregistrer</button></div>
+  <button class="tab" id="ecancel">Annuler</button>
 </div>
 
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {initializeFirestore,persistentLocalCache,collection,doc,setDoc,updateDoc,deleteDoc,onSnapshot} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {initializeFirestore,persistentLocalCache,collection,doc,setDoc,updateDoc,deleteDoc,deleteField,onSnapshot} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const app=initializeApp({
   apiKey:"AIzaSyDiTe_ttmkK1UeW8_C5BlTQPPinXwB5TUQ",
@@ -108,36 +137,49 @@ const app=initializeApp({
 const db=initializeFirestore(app,{localCache:persistentLocalCache()});
 
 const CATS=["Frais","Épicerie","Conserves","Surgelés","Boissons","Autre"];
+const TYPES=["Féculents","Viande & poisson","Légumes","Fruits","Produits laitiers","Autre"];
+const DT=["Acheté le","Ouvert le","Préparé le","Congelé le"];
 const $=id=>document.getElementById(id);
 const load=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}};
 const put=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
 const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/\s+/g," ").trim();
 const today=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
 const days=s=>Math.max(0,Math.round((new Date(today())-new Date(s))/864e5));
+const fill=(sel,arr,first)=>{sel.textContent="";if(first!==undefined){const o=document.createElement("option");o.value="";o.textContent=first;sel.append(o)}arr.forEach(c=>{const o=document.createElement("option");o.textContent=c;sel.append(o)})};
 
-let items=[],filter="Tout",code=load("foyer",""),unsub=null;
+let items=[],shop=[],filter="Tout",tfilter="Tout",code=load("foyer",""),unsubs=[],editing=null;
 const imgCache=load("imgcache",{}),cands={},busy=new Set();
 
-CATS.forEach(c=>{const o=document.createElement("option");o.textContent=c;$("cat").append(o)});
+fill($("cat"),CATS);fill($("ecat"),CATS);
+fill($("type"),TYPES,"Type d’aliment (facultatif)");fill($("etype"),TYPES,"Type (aucun)");fill($("stype"),TYPES);
+fill($("dtype"),DT);fill($("edtype"),DT);
 $("date").value=today();
 const toggleFresh=()=>$("fresh").classList.toggle("on",$("cat").value==="Frais");
 $("cat").onchange=toggleFresh;toggleFresh();
+$("ecat").onchange=()=>$("efresh").classList.toggle("on",$("ecat").value==="Frais");
+
+/* ---- onglets ---- */
+function setTab(t){
+  $("pantry").hidden=t!=="p";$("shop").hidden=t!=="s";
+  $("tabP").classList.toggle("on",t==="p");$("tabS").classList.toggle("on",t==="s");
+}
+$("tabP").onclick=()=>setTab("p");$("tabS").onclick=()=>setTab("s");
 
 /* ---- code du foyer ---- */
 function connect(){
-  if(unsub){unsub();unsub=null}
+  unsubs.forEach(u=>u());unsubs=[];
   if(!code){$("gate").classList.add("on");return}
   $("gate").classList.remove("on");$("code").textContent=code;
-  unsub=onSnapshot(collection(db,"foyers",code,"items"),
-    s=>{items=s.docs.map(d=>({id:d.id,...d.data()}));render()},
-    e=>{$("meta").textContent="Erreur de synchronisation : "+e.code});
+  const err=e=>{$("meta").textContent="Erreur de synchronisation : "+e.code};
+  unsubs.push(onSnapshot(collection(db,"foyers",code,"items"),s=>{items=s.docs.map(d=>({id:d.id,...d.data()}));render()},err));
+  unsubs.push(onSnapshot(collection(db,"foyers",code,"courses"),s=>{shop=s.docs.map(d=>({id:d.id,...d.data()}));renderShop()},err));
 }
 $("gok").onclick=()=>{
   const c=norm($("gcode").value).replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
   if(c.length<8){$("err").textContent="Au moins 8 caractères (lettres ou chiffres).";return}
   code=c;put("foyer",c);$("err").textContent="";connect();
 };
-$("chg").onclick=()=>{if(confirm("Changer de code ? Tu verras alors la liste de l’autre code.")){code="";put("foyer","");items=[];render();connect()}};
+$("chg").onclick=()=>{if(confirm("Changer de code ? Tu verras alors la liste de l’autre code.")){code="";put("foyer","");items=[];shop=[];render();renderShop();connect()}};
 
 /* ---- images ---- */
 async function candidates(name){
@@ -174,25 +216,31 @@ async function setImage(it,next){
   render();
 }
 
-/* ---- affichage ---- */
+/* ---- placards ---- */
 function ageInfo(it){
   if(!it.date)return null;
-  const d=days(it.date),pr=it.dtype==="Ouvert le"||it.dtype==="Préparé le";
+  const d=days(it.date),when=d===0?"aujourd’hui":"il y a "+d+" j";
+  if(it.dtype==="Congelé le")return{txt:"Congelé "+when,col:"var(--cy)",jeter:false};
+  const pr=it.dtype==="Ouvert le"||it.dtype==="Préparé le";
   const verb=it.dtype==="Ouvert le"?"Ouvert ":it.dtype==="Préparé le"?"Préparé ":"Acheté ";
   const jeter=pr&&d>7;
   const col=jeter?"var(--bad)":pr?(d>=5?"var(--warn)":"var(--ok)"):(d>=15?"var(--bad)":d>=10?"var(--warn)":"var(--ok)");
-  return{txt:verb+(d===0?"aujourd’hui":"il y a "+d+" j"),col,jeter};
+  return{txt:verb+when,col,jeter};
 }
 const ref=it=>doc(db,"foyers",code,"items",it.id);
-function render(){
-  const ch=$("chips");ch.textContent="";
-  ["Tout",...CATS].forEach(c=>{
-    const b=document.createElement("button");b.className="chip"+(c===filter?" on":"");
-    b.textContent=c+" ("+(c==="Tout"?items.length:items.filter(i=>i.cat===c).length)+")";
-    b.onclick=()=>{filter=c;render()};ch.append(b);
+function chipRow(el,arr,cur,all,set){
+  el.textContent="";
+  [all,...arr].forEach(c=>{
+    const b=document.createElement("button");b.className="chip"+(c===cur?" on":"");
+    b.textContent=c;b.onclick=()=>{set(c);render()};el.append(b);
   });
+}
+function render(){
+  chipRow($("chips"),CATS,filter,"Tout",c=>filter=c);
+  chipRow($("tchips"),TYPES,tfilter,"Tous types",c=>tfilter=c==="Tous types"?"Tout":c);
+  const tc=$("tchips").children;if(tfilter==="Tout")tc[0].classList.add("on");
   const q=norm($("search").value);
-  const list=items.filter(i=>(filter==="Tout"||i.cat===filter)&&norm(i.name).includes(q));
+  const list=items.filter(i=>(filter==="Tout"||i.cat===filter)&&(tfilter==="Tout"||i.type===tfilter)&&norm(i.name).includes(q));
   const s=$("sort").value;
   if(s==="az")list.sort((a,b)=>a.name.localeCompare(b.name,"fr"));
   else if(s==="qty")list.sort((a,b)=>b.qty-a.qty);
@@ -203,6 +251,8 @@ function render(){
     const d=document.createElement("div");d.className="item";
     const x=document.createElement("button");x.className="del";x.textContent="✕";x.title="Supprimer";
     x.onclick=()=>deleteDoc(ref(it));
+    const ed=document.createElement("button");ed.className="ed";ed.textContent="✎";ed.title="Modifier";
+    ed.onclick=()=>openEdit(it);
     const p=document.createElement("button");p.className="pic";p.style.opacity=busy.has(it.id)?.4:1;
     const letter=()=>{p.textContent=it.name.charAt(0).toUpperCase()};
     if(busy.has(it.id))p.textContent="⏳";
@@ -210,8 +260,8 @@ function render(){
     else letter();
     p.onclick=()=>setImage(it,true);
     const n=document.createElement("div");n.className="nm";n.textContent=it.name;
-    const t=document.createElement("div");t.className="tag";t.textContent=it.cat;
-    d.append(x,p,n,t);
+    const t=document.createElement("div");t.className="tag";t.textContent=it.cat+(it.type?" · "+it.type:"");
+    d.append(x,ed,p,n,t);
     const a=ageInfo(it);
     if(a){const e=document.createElement("div");e.className="age";e.style.color=a.col;e.textContent=a.txt;d.append(e);if(a.jeter){d.classList.add("bad");const j=document.createElement("div");j.className="jeter";j.textContent="À JETER";d.append(j)}}
     const qd=document.createElement("div");qd.className="q";
@@ -230,22 +280,84 @@ function render(){
 async function addItem(){
   const name=$("name").value.trim();
   if(!name||!code)return;
-  const qty=Math.max(1,parseInt($("qty").value)||1),cat=$("cat").value,fresh=cat==="Frais";
+  const qty=Math.max(1,parseInt($("qty").value)||1),cat=$("cat").value,fresh=cat==="Frais",type=$("type").value;
   const date=$("date").value||today(),dtype=$("dtype").value;
   $("name").value="";$("qty").value=1;$("name").focus();
   const ex=items.find(i=>norm(i.name)===norm(name)&&i.cat===cat&&(!fresh||(i.date===date&&i.dtype===dtype)));
   if(ex){updateDoc(ref(ex),{qty:ex.qty+qty});return}
-  const it={id:Date.now()+""+Math.random().toString(36).slice(2,6),name,qty,cat,created:Date.now(),image:imgCache[norm(name)]||""};
-  const data={name,qty,cat,created:it.created,image:it.image};
+  const id=Date.now()+""+Math.random().toString(36).slice(2,6);
+  const data={name,qty,cat,created:Date.now(),image:imgCache[norm(name)]||""};
+  if(type)data.type=type;
   if(fresh){data.dtype=dtype;data.date=date}
-  await setDoc(doc(db,"foyers",code,"items",it.id),data);
-  if(!it.image)setImage({...data,id:it.id},false);
+  await setDoc(doc(db,"foyers",code,"items",id),data);
+  if(!data.image)setImage({...data,id},false);
 }
 $("add").onclick=addItem;
 $("name").addEventListener("keydown",e=>{if(e.key==="Enter")addItem()});
 $("search").addEventListener("input",render);
 $("sort").onchange=render;
-render();connect();
+
+/* ---- modification ---- */
+function openEdit(it){
+  editing=it;
+  $("ename").value=it.name;$("eqty").value=it.qty;
+  $("ecat").value=it.cat;$("etype").value=it.type||"";
+  $("edtype").value=it.dtype||DT[0];$("edate").value=it.date||today();
+  $("efresh").classList.toggle("on",it.cat==="Frais");
+  $("edit").classList.add("on");
+}
+$("ecancel").onclick=()=>{$("edit").classList.remove("on");editing=null};
+$("esave").onclick=async()=>{
+  const it=editing,name=$("ename").value.trim();
+  if(!it||!name)return;
+  const cat=$("ecat").value,type=$("etype").value;
+  const upd={name,cat,qty:Math.max(1,parseInt($("eqty").value)||1),type:type||deleteField()};
+  if(cat==="Frais"){upd.dtype=$("edtype").value;upd.date=$("edate").value||today()}
+  else{upd.dtype=deleteField();upd.date=deleteField()}
+  const renamed=norm(name)!==norm(it.name);
+  if(renamed)upd.image=imgCache[norm(name)]||"";
+  $("edit").classList.remove("on");editing=null;
+  try{await updateDoc(ref(it),upd)}catch(e){}
+  if(renamed&&!upd.image)setImage({id:it.id,name,image:""},false);
+};
+
+/* ---- liste de courses ---- */
+const sref=it=>doc(db,"foyers",code,"courses",it.id);
+function renderShop(){
+  const g=$("slist");g.textContent="";
+  TYPES.forEach(t=>{
+    const l=shop.filter(i=>(TYPES.includes(i.type)?i.type:"Autre")===t)
+      .sort((a,b)=>(a.done?1:0)-(b.done?1:0)||a.name.localeCompare(b.name,"fr"));
+    if(!l.length)return;
+    const h=document.createElement("div");h.className="grp";h.textContent=t;g.append(h);
+    l.forEach(it=>{
+      const r=document.createElement("div");r.className="li"+(it.done?" done":"");
+      const cb=document.createElement("input");cb.type="checkbox";cb.checked=!!it.done;
+      cb.onchange=()=>updateDoc(sref(it),{done:cb.checked});
+      const n=document.createElement("div");n.className="ln";n.textContent=it.name;
+      n.onclick=()=>{const v=prompt("Modifier :",it.name);if(v&&v.trim())updateDoc(sref(it),{name:v.trim()})};
+      const x=document.createElement("button");x.textContent="✕";x.onclick=()=>deleteDoc(sref(it));
+      r.append(cb,n,x);g.append(r);
+    });
+  });
+  $("sempty").hidden=shop.length>0;
+  const n=shop.filter(i=>!i.done).length;
+  $("tabS").textContent="Courses"+(n?" ("+n+")":"");
+  $("sclear").hidden=!shop.some(i=>i.done);
+}
+function addShop(){
+  const name=$("sname").value.trim();
+  if(!name||!code)return;
+  $("sname").value="";$("sname").focus();
+  if(shop.some(i=>!i.done&&norm(i.name)===norm(name)))return;
+  const id=Date.now()+""+Math.random().toString(36).slice(2,6);
+  setDoc(doc(db,"foyers",code,"courses",id),{name,type:$("stype").value,done:false,created:Date.now()});
+}
+$("sadd").onclick=addShop;
+$("sname").addEventListener("keydown",e=>{if(e.key==="Enter")addShop()});
+$("sclear").onclick=()=>shop.filter(i=>i.done).forEach(i=>deleteDoc(sref(i)));
+
+render();renderShop();connect();
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
 </script>
 </body>
